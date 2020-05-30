@@ -1,6 +1,9 @@
 ## Todo List (ncurses)
 #### Author: [Aseem Lalfakawma](https://github.com/alalfakawma)
 
+#### Screenshot
+![Todo List screenshot](https://imgur.com/0YPQC11)
+
 ##### Clone and check it out
 
 Make sure you have Cargo installed, if you install the rust package, I think it should come with it. Mine did (on Manjaro system btw).
