@@ -22,7 +22,7 @@ fn main() {
         addstr("---------------\n");
         addstr("---TODO LIST---\n");
         addstr("---------------\n");
-        addstr("a: Add Todo, x: Done/Undone, j: DOWN, k: UP, q: Quit\n\n");
+        addstr("a: Add, d: Delete, x: Done/Undone, j: DOWN, k: UP, q: Quit\n\n");
 
         if todos.len() == 0 {
             addstr("--- **NOTHING TODO** ---\n");
