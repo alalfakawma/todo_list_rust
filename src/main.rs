@@ -11,7 +11,7 @@ use ncurses::*;
 fn main() {
     let mut todos: Vec<Todo> = Vec::new();
     let mut cur_index: i32 = 0;
-    let mut screen: SCREEN = SCREEN::MAIN; // Set the screen
+    let mut screen: i8 = SCREEN::MAIN as i8; // Set the screen
 
     add_todo("Do Something", &mut todos); // Test
     add_todo("Do Something", &mut todos); // Test
@@ -24,14 +24,14 @@ fn main() {
     while cur_index != -1 {
         addstr("---TODO LIST---\n");
 
-        if screen == SCREEN::MAIN {
+        if screen == SCREEN::MAIN as i8 {
             list_todos(&todos, cur_index);
-        } else if screen == SCREEN::ADD {
+        } else if screen == SCREEN::ADD as i8 {
             show_add_input();
         }
         refresh();
         // Listens for key
-        listen_key(&mut cur_index, todos.len() as i32);
+        listen_key(&mut cur_index, todos.len() as i32, &mut screen, &mut todos);
     }
     endwin();
 }
@@ -59,11 +59,13 @@ fn add_todo(todo: &str, todos: &mut Vec<Todo>) {
     todos.push(Todo { todo: todo.to_string(), done: false });
 }
 
-fn listen_key(cur_index: &mut i32, max: i32) {
+fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Vec<Todo>) {
     enum KEY {
         J = 106,
         K = 107,
-        Q = 113
+        Q = 113,
+        X = 120,
+        A = 97
     }
 
     let k: i32 = getch();
@@ -83,14 +85,21 @@ fn listen_key(cur_index: &mut i32, max: i32) {
     } else if k == KEY::Q as i32 {
         // Quit
         *cur_index = -1;
+    } else if k == KEY::A as i32 {
+        // Add
+        *screen = SCREEN::ADD as i8;
+    } else if k == KEY::X as i32 {
+        // Do/Undo
+        do_undo(*cur_index, &mut todos);
     }
 
     clear(); // Clear and refresh screen
 }
 
 fn show_add_input() {
+    let mut todo: String = String::new();
     addstr("Enter Todo: ");
-    getch();
+    getstr(&mut todo);
 }
 
 fn list_todos(todos: &Vec<Todo>, cur_index: i32) {
@@ -98,4 +107,8 @@ fn list_todos(todos: &Vec<Todo>, cur_index: i32) {
     for (i, todo) in todos.iter().enumerate() {
         addstr(&todo.show(i, cur_index));
     }
+}
+
+fn do_undo(mut cur_index: i32, todos: &mut Vec<Todo>) {
+    todos[cur_index as usize].done = !todos[cur_index as usize].done;
 }
