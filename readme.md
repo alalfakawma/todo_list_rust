@@ -1,5 +1,5 @@
 #### Todo List (ncurses)
-#### Author: Aseem Lalfakawma<https://github.com/alalfakawma>
+#### Author: [Aseem Lalfakawma](https://github.com/alalfakawma)
 
 ##### Clone and check it out
 
