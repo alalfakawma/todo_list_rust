@@ -19,7 +19,9 @@ fn main() {
     keypad(bw, true);
 
     while cur_index != -1 {
+        addstr("---------------\n");
         addstr("---TODO LIST---\n");
+        addstr("---------------\n");
         addstr("a: Add Todo, x: Done/Undone, j: DOWN, k: UP, q: Quit\n\n");
 
         if todos.len() == 0 {
@@ -31,7 +33,7 @@ fn main() {
             // Listens for key
             listen_key(&mut cur_index, todos.len() as i32, &mut screen, &mut todos);
         } else if screen == SCREEN::ADD as i8 {
-            show_add_input(&mut todos, &mut screen);
+            show_add_input(&mut todos, &mut screen, &bw);
         }
         refresh();
         clear();
@@ -104,10 +106,12 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
     }
 }
 
-fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8) {
+fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: &WINDOW) {
     let mut todo: String = String::new();
+    let def_x = getmaxx(*window);
     addstr("Enter Todo: ");
 
+    curs_set(CURSOR_VISIBILITY::CURSOR_VISIBLE); // Show the terminal cursor
     let mut c: i32 = 97;
     while c != '\n' as i32 {
         noecho();
@@ -115,8 +119,10 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8) {
 
         if c != '\n' as i32 {
             if c == 127 {
-                delch();
-                todo.pop();
+                if !todo.is_empty() {
+                    mvdelch(getcury(*window), getcurx(*window) - 1);
+                    todo.pop();
+                }
             } else {
                 todo.push(char::from(c as u8));
                 addch(c as u32);
@@ -124,9 +130,13 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8) {
         }
     }
 
-    add_todo(&todo, &mut todos);
+    if !todo.is_empty() {
+        add_todo(&todo, &mut todos);
+    }
 
     *screen = SCREEN::MAIN as i8;
+
+    curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // Don't show the terminal cursor
 }
 
 fn list_todos(todos: &Vec<Todo>, cur_index: i32) {
