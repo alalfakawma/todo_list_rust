@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["alalfakawma <alalfakawma@live.com>"]
 edition = "2018"
 description = "Just a simple Ncurses Todo List"
-license = MIT
+license = "MIT"
 
 [dependencies]
 ncurses = "5.86.0"
