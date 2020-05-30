@@ -13,9 +13,10 @@ fn main() {
     let mut cur_index: i32 = 0;
     let mut screen: i8 = SCREEN::MAIN as i8; // Set the screen
 
-    initscr();
+    let bw: WINDOW = initscr();
 
     curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // Don't show the terminal cursor
+    keypad(bw, true);
 
     while cur_index != -1 {
         addstr("---TODO LIST---\n");
@@ -71,8 +72,9 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
         D = 100
     }
 
+    noecho();
     let k: i32 = getch();
-    clear();
+    echo();
 
     if k == KEY::J as i32 {
         // Down
@@ -105,11 +107,26 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
 fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8) {
     let mut todo: String = String::new();
     addstr("Enter Todo: ");
-    if getstr(&mut todo) == 0 {
-        add_todo(&todo, &mut todos);
 
-        *screen = SCREEN::MAIN as i8;
+    let mut c: i32 = 97;
+    while c != '\n' as i32 {
+        noecho();
+        c = getch();
+
+        if c != '\n' as i32 {
+            if c == 127 {
+                delch();
+                todo.pop();
+            } else {
+                todo.push(char::from(c as u8));
+                addch(c as u32);
+            }
+        }
     }
+
+    add_todo(&todo, &mut todos);
+
+    *screen = SCREEN::MAIN as i8;
 }
 
 fn list_todos(todos: &Vec<Todo>, cur_index: i32) {
