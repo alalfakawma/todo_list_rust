@@ -2,7 +2,7 @@
 #### Author: [Aseem Lalfakawma](https://github.com/alalfakawma)
 
 #### Screenshot
-![Todo List screenshot](https://imgur.com/0YPQC11)
+![Todo List screenshot](https://imgur.com/0YPQC11.png)
 
 ##### Clone and check it out
 
