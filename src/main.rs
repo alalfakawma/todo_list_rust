@@ -108,7 +108,6 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
 
 fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: &WINDOW) {
     let mut todo: String = String::new();
-    let def_x = getmaxx(*window);
     addstr("Enter Todo: ");
 
     curs_set(CURSOR_VISIBILITY::CURSOR_VISIBLE); // Show the terminal cursor
