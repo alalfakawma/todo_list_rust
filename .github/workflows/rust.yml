@@ -16,7 +16,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: install
+            - name: install ncurses dep
               run: sudo apt-get install libncurses-dev
 
             - name: Build
