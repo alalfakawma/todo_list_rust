@@ -7,4 +7,4 @@ description = "Just a simple Ncurses Todo List"
 license = "MIT"
 
 [dependencies]
-ncurses = "5.86.0"
+ncurses = "5.99.0"
