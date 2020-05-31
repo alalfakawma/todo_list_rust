@@ -168,14 +168,15 @@ fn do_undo(cur_index: i32, todos: &mut Vec<Todo>) {
 }
 
 fn delete_todo(cur_index: &mut i32, todos: &mut Vec<Todo>) {
-    if *cur_index == (todos.len() as i32) - 1 {
+    let len = todos.len() as i32;
+    todos.remove(*cur_index as usize);
+    if *cur_index == len - 1 {
         if (*cur_index - 1) <= 0 {
             *cur_index = 0;
         } else {
             *cur_index -= 1;
         }
     }
-    todos.remove(*cur_index as usize);
 }
 
 fn update_todo(todo: &str, todos: &mut Vec<Todo>, cur_index: i32) {
