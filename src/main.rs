@@ -124,7 +124,7 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: &WINDOW) {
                 }
             } else {
                 todo.push(char::from(c as u8));
-                addch(c as u32);
+                addch(c as u64);
             }
         }
     }
