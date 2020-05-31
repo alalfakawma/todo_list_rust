@@ -24,7 +24,7 @@ fn main() {
         addstr("---------------\n");
         addstr("a: Add, d: Delete, x: Done/Undone, j: DOWN, k: UP, q: Quit\n\n");
 
-        if todos.len() == 0 {
+        if todos.is_empty() {
             addstr("--- **NOTHING TODO** ---\n");
         }
 
@@ -33,7 +33,7 @@ fn main() {
             // Listens for key
             listen_key(&mut cur_index, todos.len() as i32, &mut screen, &mut todos);
         } else if screen == SCREEN::ADD as i8 {
-            show_add_input(&mut todos, &mut screen, &bw);
+            show_add_input(&mut todos, &mut screen, bw);
         }
         refresh();
         clear();
@@ -56,11 +56,7 @@ impl Todo {
         let done = if self.done { "[x] " } else { "[ ] " };
         let cursor = if i == cur_index as usize { "* " } else { "  " };
 
-        return cursor.to_string()
-            + &format!("#{} ", i + 1)
-            + &done.to_string()
-            + &self.todo
-            + "\n";
+        cursor.to_string() + &format!("#{} ", i + 1) + &done.to_string() + &self.todo + "\n"
     }
 }
 
@@ -88,10 +84,8 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
     if k == KEY::J as i32 {
         // Down
         *cur_index += 1;
-        if cur_index >= &mut (max - 1) {
-            if max != 0 {
-                *cur_index = max - 1;
-            }
+        if cur_index >= &mut (max - 1) && max != 0 {
+            *cur_index = max - 1;
         }
     } else if k == KEY::K as i32 {
         // Up
@@ -113,7 +107,7 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
     }
 }
 
-fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: &WINDOW) {
+fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: WINDOW) {
     let mut todo: String = String::new();
     addstr("Enter Todo: ");
 
@@ -126,7 +120,7 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: &WINDOW) {
         if c != '\n' as i32 {
             if c == 127 {
                 if !todo.is_empty() {
-                    mvdelch(getcury(*window), getcurx(*window) - 1);
+                    mvdelch(getcury(window), getcurx(window) - 1);
                     todo.pop();
                 }
             } else {
@@ -145,7 +139,7 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: &WINDOW) {
     curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // Don't show the terminal cursor
 }
 
-fn list_todos(todos: &Vec<Todo>, cur_index: i32) {
+fn list_todos(todos: &[Todo], cur_index: i32) {
     // Lists the todos
     for (i, todo) in todos.iter().enumerate() {
         addstr(&todo.show(i, cur_index));
