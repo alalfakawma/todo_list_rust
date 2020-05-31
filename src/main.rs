@@ -43,12 +43,12 @@ fn main() {
 
 enum SCREEN {
     MAIN,
-    ADD
+    ADD,
 }
 
 struct Todo {
     todo: String,
-    done: bool
+    done: bool,
 }
 
 impl Todo {
@@ -56,12 +56,19 @@ impl Todo {
         let done = if self.done { "[x] " } else { "[ ] " };
         let cursor = if i == cur_index as usize { "* " } else { "  " };
 
-        return cursor.to_string() + &format!("#{} ", i + 1) + &done.to_string() + &self.todo + "\n";
+        return cursor.to_string()
+            + &format!("#{} ", i + 1)
+            + &done.to_string()
+            + &self.todo
+            + "\n";
     }
 }
 
 fn add_todo(todo: &str, todos: &mut Vec<Todo>) {
-    todos.push(Todo { todo: todo.to_string(), done: false });
+    todos.push(Todo {
+        todo: todo.to_string(),
+        done: false,
+    });
 }
 
 fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Vec<Todo>) {
@@ -71,7 +78,7 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
         Q = 113,
         X = 120,
         A = 97,
-        D = 100
+        D = 100,
     }
 
     noecho();
