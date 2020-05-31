@@ -16,6 +16,9 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
+            - name: install
+              run: sudo apt-get install libncurses-dev
+
             - name: Build
               run: cargo build --verbose
 
