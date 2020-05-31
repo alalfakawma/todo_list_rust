@@ -15,8 +15,6 @@ fn main() {
 
     let bw: WINDOW = initscr();
 
-    add_todo("test", &mut todos);
-
     curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // Don't show the terminal cursor
     keypad(bw, true);
 
@@ -72,7 +70,7 @@ fn add_todo(todo: &str, todos: &mut Vec<Todo>) {
     });
 }
 
-fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Vec<Todo>) {
+fn listen_key(mut cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Vec<Todo>) {
     enum KEY {
         J = 106,
         K = 107,
@@ -109,13 +107,15 @@ fn listen_key(cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Ve
         // Do/Undo
         do_undo(*cur_index, &mut todos);
     } else if k == KEY::D as i32 {
-        delete_todo(*cur_index, &mut todos);
+        delete_todo(&mut cur_index, &mut todos);
     } else if k == KEY::E as i32 {
-        *screen = SCREEN::EDIT as i8;
+        if !todos.is_empty() {
+            *screen = SCREEN::EDIT as i8;
+        }
     }
 }
 
-fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: WINDOW, cur_index: i32) {
+fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: WINDOW, mut cur_index: i32) {
     let mut todo: String = if cur_index >= 0 { (*todos[cur_index as usize].todo).into() } else { String::new() };
     // let mut todo: String = String::new();
     addstr("Enter Todo: ");
@@ -145,8 +145,10 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: WINDOW, cu
 
     if !todo.is_empty() && cur_index == -1 {
         add_todo(&todo, &mut todos);
-    } else {
+    } else if !todo.is_empty() && cur_index >= 0 {
         update_todo(&todo, &mut todos, cur_index);
+    } else if todo.is_empty() && cur_index >= 0 {
+        delete_todo(&mut cur_index, &mut todos);
     }
 
     *screen = SCREEN::MAIN as i8;
@@ -165,8 +167,15 @@ fn do_undo(cur_index: i32, todos: &mut Vec<Todo>) {
     todos[cur_index as usize].done = !todos[cur_index as usize].done;
 }
 
-fn delete_todo(cur_index: i32, todos: &mut Vec<Todo>) {
-    todos.remove(cur_index as usize);
+fn delete_todo(cur_index: &mut i32, todos: &mut Vec<Todo>) {
+    if *cur_index == (todos.len() as i32) - 1 {
+        if (*cur_index - 1) <= 0 {
+            *cur_index = 0;
+        } else {
+            *cur_index -= 1;
+        }
+    }
+    todos.remove(*cur_index as usize);
 }
 
 fn update_todo(todo: &str, todos: &mut Vec<Todo>, cur_index: i32) {
