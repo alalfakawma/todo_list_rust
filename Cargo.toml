@@ -1,6 +1,6 @@
 [package]
 name = "todo_list"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["alalfakawma <alalfakawma@live.com>"]
 edition = "2018"
 description = "Just a simple Ncurses Todo List"
