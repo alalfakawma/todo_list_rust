@@ -8,3 +8,4 @@ license = "MIT"
 
 [dependencies]
 ncurses = "5.99.0"
+toml = "0.5"

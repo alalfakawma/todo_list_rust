@@ -5,14 +5,21 @@
  */
 
 extern crate ncurses;
+extern crate toml;
 
 use ncurses::*;
+use toml::Value;
+use std::fs::File;
+use std::io::BufReader;
+use std::io::prelude::*;
 
 fn main() {
     let mut todos: Vec<Todo> = Vec::new();
     let mut cur_index: i32 = 0;
     let mut screen: i8 = SCREEN::MAIN as i8; // Set the screen
 
+    println!("{}", toml("version"));
+    return;
     let bw: WINDOW = initscr();
 
     curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // Don't show the terminal cursor
@@ -181,4 +188,27 @@ fn delete_todo(cur_index: &mut i32, todos: &mut Vec<Todo>) {
 
 fn update_todo(todo: &str, todos: &mut Vec<Todo>, cur_index: i32) {
     todos[cur_index as usize].todo = todo.into();
+}
+
+fn open_file() -> String {
+    let file = File::open("Cargo.toml").unwrap();
+    let mut reader = BufReader::new(file);
+    let mut contents = String::new();
+    reader.read_to_string(&mut contents);
+
+    contents;
+}
+
+fn toml(key: &str) -> String {
+    let file_contents = open_file();
+    let mut res: String = String::new();
+
+    for k in file_contents.split('\n') {
+        let value = k.parse::<Value>().unwrap();
+        if value.as_table().unwrap().contains_key(key) {
+            res = value[key].as_str().unwrap().into();
+        }
+    }
+
+    res
 }
