@@ -5,30 +5,37 @@
  */
 
 extern crate ncurses;
-extern crate toml;
 
-use ncurses::*;
-use toml::Value;
-use std::fs::File;
-use std::io::BufReader;
+use std::fs;
 use std::io::prelude::*;
+use ncurses::*;
+use std::path::Path;
+use serde::{Serialize, Deserialize};
+use serde_json;
+use std::fs::OpenOptions;
+
+const FILENAME: &str = ".todos.json";
 
 fn main() {
+    let current_working_dir: &str = &std::env::current_dir().unwrap().into_os_string().into_string().unwrap();
     let mut todos: Vec<Todo> = Vec::new();
     let mut cur_index: i32 = 0;
     let mut screen: i8 = SCREEN::MAIN as i8; // Set the screen
 
-    println!("{}", toml("version"));
-    return;
+    // Check if the todos.json file already exists
+    if Path::new(&(current_working_dir.to_owned() + "/".into() + FILENAME.into())).exists() {
+        todos = deserialize_todos();
+    }
+
     let bw: WINDOW = initscr();
 
     curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // Don't show the terminal cursor
     keypad(bw, true);
 
     while cur_index != -1 {
-        addstr("---------------\n");
-        addstr("---TODO LIST---\n");
-        addstr("---------------\n");
+        addstr("-------------------------------------------------------------------\n");
+        addstr("-----------------------------TODO LIST-----------------------------\n");
+        addstr("-------------------------------------------------------------------\n");
         addstr("a: Add, e: Edit, d: Delete, x: Done/Undone, j: DOWN, k: UP, q: Quit\n\n");
 
         if todos.is_empty() && screen == SCREEN::MAIN as i8 {
@@ -56,6 +63,7 @@ enum SCREEN {
     EDIT
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 struct Todo {
     todo: String,
     done: bool,
@@ -75,6 +83,7 @@ fn add_todo(todo: &str, todos: &mut Vec<Todo>) {
         todo: todo.to_string(),
         done: false,
     });
+    write_todo(&todos);
 }
 
 fn listen_key(mut cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mut Vec<Todo>) {
@@ -172,6 +181,7 @@ fn list_todos(todos: &[Todo], cur_index: i32) {
 
 fn do_undo(cur_index: i32, todos: &mut Vec<Todo>) {
     todos[cur_index as usize].done = !todos[cur_index as usize].done;
+    write_todo(&todos);
 }
 
 fn delete_todo(cur_index: &mut i32, todos: &mut Vec<Todo>) {
@@ -184,31 +194,63 @@ fn delete_todo(cur_index: &mut i32, todos: &mut Vec<Todo>) {
             *cur_index -= 1;
         }
     }
+    write_todo(&todos);
 }
 
 fn update_todo(todo: &str, todos: &mut Vec<Todo>, cur_index: i32) {
     todos[cur_index as usize].todo = todo.into();
+    write_todo(&todos);
 }
 
-fn open_file() -> String {
-    let file = File::open("Cargo.toml").unwrap();
-    let mut reader = BufReader::new(file);
-    let mut contents = String::new();
-    reader.read_to_string(&mut contents);
+fn open_json() -> String {
+    let current_working_dir: &str = &std::env::current_dir().unwrap().into_os_string().into_string().unwrap();
+    let full_path: String = current_working_dir.to_owned() + "/".into() + FILENAME.into();
+    let path = Path::new(&full_path);
 
-    contents;
+    fs::read_to_string(path).unwrap()
 }
 
-fn toml(key: &str) -> String {
-    let file_contents = open_file();
-    let mut res: String = String::new();
+fn write_todo(todos: &Vec<Todo>) {
+    let current_working_dir: &str = &std::env::current_dir().unwrap().into_os_string().into_string().unwrap();
+    let full_path: String = current_working_dir.to_owned() + "/".into() + FILENAME.into();
+    let path = Path::new(&full_path);
 
-    for k in file_contents.split('\n') {
-        let value = k.parse::<Value>().unwrap();
-        if value.as_table().unwrap().contains_key(key) {
-            res = value[key].as_str().unwrap().into();
+    match fs::write(path, serialize_todos(&todos)) {
+        Err(e) => {
+            panic!("Cannot write to file: {:?}", e)
+        },
+        Ok(_) => {
+        }
+    };
+
+    if path.exists() {
+        add_to_gitignore();
+    }
+}
+
+fn serialize_todos(todos: &Vec<Todo>) -> String {
+    serde_json::to_string_pretty(&todos).unwrap()
+}
+
+fn deserialize_todos() -> Vec<Todo> {
+    serde_json::from_str(&open_json()).unwrap()
+}
+
+fn add_to_gitignore() {
+    let current_working_dir: &str = &std::env::current_dir().unwrap().into_os_string().into_string().unwrap();
+    let full_path: String = current_working_dir.to_owned() + "/".into() + ".gitignore".into();
+    let path = Path::new(&full_path);
+
+    if path.exists() {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(".gitignore")
+            .unwrap();
+
+
+        if let Err(e) = writeln!(file, "{}", FILENAME) {
+            eprintln!("Couldn't write to file: {}", e);
         }
     }
-
-    res
 }
