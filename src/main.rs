@@ -242,15 +242,17 @@ fn add_to_gitignore() {
     let path = Path::new(&full_path);
 
     if path.exists() {
-        let mut file = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(".gitignore")
-            .unwrap();
+        if !fs::read_to_string(path).unwrap().contains(FILENAME) {
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(".gitignore")
+                .unwrap();
 
 
-        if let Err(e) = writeln!(file, "{}", FILENAME) {
-            eprintln!("Couldn't write to file: {}", e);
+            if let Err(e) = writeln!(file, "{}", FILENAME) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
         }
     }
 }
