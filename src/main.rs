@@ -148,7 +148,7 @@ fn show_add_input(mut todos: &mut Vec<Todo>, screen: &mut i8, window: WINDOW, mu
         c = getch();
 
         if c != '\n' as i32 {
-            if c == 127 {
+            if c == 127 || c == KEY_BACKSPACE {
                 if !todo.is_empty() {
                     mvdelch(getcury(window), getcurx(window) - 1);
                     todo.pop();
