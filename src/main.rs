@@ -94,7 +94,8 @@ fn listen_key(mut cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mu
         X = 120,
         A = 97,
         D = 100,
-        E = 101
+        E = 101,
+        ENTER = 10
     }
 
     noecho();
@@ -124,7 +125,7 @@ fn listen_key(mut cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mu
         do_undo(*cur_index, &mut todos);
     } else if k == KEY::D as i32 {
         delete_todo(&mut cur_index, &mut todos);
-    } else if k == KEY::E as i32 {
+    } else if k == KEY::E as i32 || k == KEY::ENTER as i32 {
         if !todos.is_empty() {
             *screen = SCREEN::EDIT as i8;
         }
