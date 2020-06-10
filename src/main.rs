@@ -102,13 +102,13 @@ fn listen_key(mut cur_index: &mut i32, max: i32, screen: &mut i8, mut todos: &mu
     let k: i32 = getch();
     echo();
 
-    if k == KEY::J as i32 {
+    if k == KEY::J as i32 || k == KEY_DOWN {
         // Down
         *cur_index += 1;
         if cur_index >= &mut (max - 1) && max != 0 {
             *cur_index = max - 1;
         }
-    } else if k == KEY::K as i32 {
+    } else if k == KEY::K as i32 || k == KEY_UP {
         // Up
         *cur_index -= 1;
         if cur_index <= &mut 0 {
