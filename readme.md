@@ -27,12 +27,8 @@ cargo install todo_list
 
 ```bash
 git clone https://github.com/alalfakawma/todo_list_rust.git
-```
 
-```bash
 cd todo_list_rust/
-```
 
-```bash
 cargo run
 ```
