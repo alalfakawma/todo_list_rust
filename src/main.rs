@@ -33,13 +33,32 @@ fn main() {
     keypad(bw, true);
 
     while cur_index != -1 {
-        addstr("-------------------------------------------------------------------\n");
-        addstr("-----------------------------TODO LIST-----------------------------\n");
-        addstr("-------------------------------------------------------------------\n");
-        addstr("a: Add, e: Edit, d: Delete, x: Done/Undone, j: DOWN, k: UP, q: Quit\n\n");
+		addstr("\n ");
+		addch(ACS_ULCORNER());
+		addch(ACS_HLINE());
+		addstr("todo");
+		for _i in 0..22 {
+			addch(ACS_HLINE());
+		}
+		addch(ACS_URCORNER());
+		addstr("\n ");
+		addch(ACS_VLINE());
+        addstr(" a: Add, e: Edit, q: Quit  ");
+   		addch(ACS_VLINE());    
+		addstr("\n ");
+		addch(ACS_VLINE());
+        addstr(" d: Delete, x: Done/Undone ");
+   		addch(ACS_VLINE());    
+		addstr("\n ");
+		addch(ACS_LLCORNER());
+		for _i in 0..27 {
+			addch(ACS_HLINE());
+		}
+		addch(ACS_LRCORNER());
+		addstr("\n");
 
         if todos.is_empty() && screen == SCREEN::MAIN as i8 {
-            addstr("--- **NOTHING TODO** ---\n");
+            addstr("   All done!\n");
         }
 
         if screen == SCREEN::MAIN as i8 {
@@ -72,9 +91,9 @@ struct Todo {
 impl Todo {
     pub fn show(&self, i: usize, cur_index: i32) -> String {
         let done = if self.done { "[x] " } else { "[ ] " };
-        let cursor = if i == cur_index as usize { "* " } else { "  " };
+        let cursor = if i == cur_index as usize { " > " } else { "   " };
 
-        cursor.to_string() + &format!("#{} ", i + 1) + &done.to_string() + &self.todo + "\n"
+        cursor.to_string() + /*&format!("{} ", i + 1) +*/ &done.to_string() + &self.todo + "\n"
     }
 }
 
