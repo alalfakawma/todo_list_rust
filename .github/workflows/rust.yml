@@ -24,3 +24,6 @@ jobs:
 
             - name: Run tests
               run: cargo test --verbose
+
+            - name: Publish to crates.io
+              run: cargo login ${{ secrets.CRATE_LOGIN_TOKEN }} && cargo publish --allow-dirty
