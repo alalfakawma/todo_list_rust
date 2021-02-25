@@ -36,22 +36,22 @@ fn main() {
 		addstr("\n ");
 		addch(ACS_ULCORNER());
 		addch(ACS_HLINE());
-		addstr("todo");
+		addstr("todos");
 		for _i in 0..22 {
 			addch(ACS_HLINE());
 		}
 		addch(ACS_URCORNER());
 		addstr("\n ");
 		addch(ACS_VLINE());
-        addstr(" a: Add, e: Edit, q: Quit  ");
+        addstr(" a: Add, e: Edit, q: Quit   ");
    		addch(ACS_VLINE());    
 		addstr("\n ");
 		addch(ACS_VLINE());
-        addstr(" d: Delete, x: Done/Undone ");
+        addstr(" d: Delete, x: Done/Undone  ");
    		addch(ACS_VLINE());    
 		addstr("\n ");
 		addch(ACS_LLCORNER());
-		for _i in 0..27 {
+		for _i in 0..28 {
 			addch(ACS_HLINE());
 		}
 		addch(ACS_LRCORNER());
