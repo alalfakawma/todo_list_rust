@@ -5,7 +5,7 @@
 ![Todo List screenshot](https://i.imgur.com/UQO5t6U.png)
 
 #### Note
-This app creates a `.todos.json` file in the folder that you run it to persist the data. It also will automatically add the `.todos.json` file to `.gitignore` file in case it exists.
+This app creates a `.todos.json` file in the folder that you run it to persist the data. It will also automatically add a `.todos.json` file to the `.gitignore` file in case it exists.
 
 #### Keybindings
 - _a_ - Add
